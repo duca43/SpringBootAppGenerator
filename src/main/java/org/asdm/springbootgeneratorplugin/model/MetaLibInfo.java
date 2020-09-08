@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public abstract class FMElement {
-	private String name;
+public class MetaLibInfo {
+    private String groupId;
+    private String artifactId;
+    private String version;
 }

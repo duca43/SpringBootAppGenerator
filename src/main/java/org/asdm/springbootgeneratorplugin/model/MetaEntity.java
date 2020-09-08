@@ -1,21 +1,22 @@
 package org.asdm.springbootgeneratorplugin.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class FMClass extends FMType {
+public class MetaEntity extends MetaElement {
 	private String visibility;
-	private List<FMProperty> properties = new ArrayList<>();
-	private List<String> importedPackages = new ArrayList<>();
+	private List<MetaColumn> columns = new ArrayList<>();
+	private String primaryKeyType;
+
+	public MetaEntity(final String name, final String visibility) {
+		super(name);
+		this.visibility = visibility;
+	}
 }
