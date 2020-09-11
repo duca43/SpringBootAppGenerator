@@ -14,6 +14,7 @@ public class MetaEntity extends MetaElement {
 	private String visibility;
 	private List<MetaColumn> columns = new ArrayList<>();
 	private String primaryKeyType;
+	private Integer primaryKeyColumnCounter;
 
 	public MetaEntity(final String name, final String visibility) {
 		super(name);
