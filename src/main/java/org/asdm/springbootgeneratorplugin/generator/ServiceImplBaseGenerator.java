@@ -38,28 +38,6 @@ public class ServiceImplBaseGenerator extends BasicGenerator {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
-        int pkColumnsCounter = 0;
-        String pkType = "";
-        String pkName = "";
-        for (final MetaColumn metaColumn : this.metaEntity.getColumns()) {
-            if (metaColumn.isPartOfPrimaryKey()) {
-                pkColumnsCounter++;
-                pkType = metaColumn.getType();
-                pkName = metaColumn.getName();
-            }
-        }
-
-        if (pkColumnsCounter == 0) {
-            this.metaEntity.setPrimaryKeyType("Long");
-            this.metaEntity.setPrimaryKeyName("id");
-        } else if (pkColumnsCounter == 1) {
-            this.metaEntity.setPrimaryKeyType(pkType);
-            this.metaEntity.setPrimaryKeyName(pkName);
-        } else {
-            this.metaEntity.setPrimaryKeyType(this.metaEntity.getName() + "Id");
-            this.metaEntity.setPrimaryKeyName("id");
-        }
-
         final Writer out;
         final Map<String, Object> context = new HashMap<String, Object>();
         try {

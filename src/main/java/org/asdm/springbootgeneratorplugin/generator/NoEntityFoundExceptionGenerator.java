@@ -38,23 +38,6 @@ public class NoEntityFoundExceptionGenerator extends BasicGenerator {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
-        int pkColumnsCounter = 0;
-        String pkType = "";
-        for (final MetaColumn metaColumn : this.metaEntity.getColumns()) {
-            if (metaColumn.isPartOfPrimaryKey()) {
-                pkColumnsCounter++;
-                pkType = metaColumn.getType();
-            }
-        }
-
-        if (pkColumnsCounter == 0) {
-            this.metaEntity.setPrimaryKeyType("Long");
-        } else if (pkColumnsCounter == 1) {
-            this.metaEntity.setPrimaryKeyType(pkType);
-        } else {
-            this.metaEntity.setPrimaryKeyType(this.metaEntity.getName() + "Id");
-        }
-
         final Writer out;
         final Map<String, Object> context = new HashMap<String, Object>();
         try {

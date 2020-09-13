@@ -32,19 +32,20 @@ ${entity.visibility} class ${entity.name} {
     ${property.visibility} ${property.type} ${property.name};
 
 </#if>
-<#if property.upper == 1>
+<#if property.upper == 1 && !property.partOfPrimaryKey>
 <#if property.relationshipType??>
     <#if property.relationshipType == "OneToOne">
     @OneToOne
     <#elseif property.relationshipType == "ManyToOne">
     @ManyToOne
-    @JoinColumn(nullable = <#if property.lower == 0>true<#else>false</#if>)
+    @JoinColumn(<#if property.unique??>unique = ${property.unique?c} </#if><#if property.lower??>, nullable = <#if property.lower == 0>true<#else>false</#if></#if>)
     </#if>
     ${property.visibility} ${property.type} ${property.name};
 
-<#elseif !property.partOfPrimaryKey>
-    @Column(unique = ${property.unique?c} <#if property.lower??>, nullable = <#if property.lower == 0>true<#else>false</#if></#if>)
+<#else>
+    @Column(<#if property.unique??>unique = ${property.unique?c} </#if><#if property.lower??>, nullable = <#if property.lower == 0>true<#else>false</#if></#if>)
     ${property.visibility} ${property.type} ${property.name};
+
 </#if>
 <#elseif property.upper == -1>
 <#if property.relationshipType??>

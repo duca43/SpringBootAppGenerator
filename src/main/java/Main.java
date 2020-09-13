@@ -36,6 +36,11 @@ public class Main {
         metaEntity.getColumns().add(metaColumn2);
         metaEntity.getColumns().add(metaColumn3);
 
+        final MetaEnumeration metaEnumeration = new MetaEnumeration("UserType");
+        metaEnumeration.getValues().add("ADMINISTRATOR");
+        metaEnumeration.getValues().add("AUTHOR");
+        metaEnumeration.getValues().add("USER");
+
         generatorOptions.setTemplateDir("src/main/resources/templates/model");
         generatorOptions.setTemplateName("model");
         generatorOptions.setOutputFileName("{0}.java");
@@ -53,10 +58,13 @@ public class Main {
         }
         if (pkColumnsCounter > 1) {
             generatorOptions.setTemplateName("embedded_key");
-            generatorOptions.setOutputFileName("{0}.java");
             final EmbeddedKeyGenerator embeddedKeyGenerator = new EmbeddedKeyGenerator(generatorOptions, metaEntity, columns);
             embeddedKeyGenerator.generate();
         }
+
+        generatorOptions.setTemplateName("enum");
+        final EnumGenerator enumGenerator = new EnumGenerator(generatorOptions, metaEnumeration);
+        enumGenerator.generate();
 
         generatorOptions.setTemplateDir("src/main/resources/templates/repository");
         generatorOptions.setTemplateName("repository_base");

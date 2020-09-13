@@ -38,20 +38,11 @@ public class ModelGenerator extends BasicGenerator {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
-        int pkColumnsCounter = 0;
-        for (final MetaColumn metaColumn : this.metaEntity.getColumns()) {
-            if (metaColumn.isPartOfPrimaryKey()) {
-                pkColumnsCounter++;
-            }
-        }
-
-        this.metaEntity.setPrimaryKeyColumnCounter(pkColumnsCounter);
-
         final Writer out;
         final Map<String, Object> context = new HashMap<String, Object>();
         try {
             final String modelFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/model";
-            out = this.getWriter(this.metaEntity.getName() + "Entity", modelFilePackage);
+            out = this.getWriter(this.metaEntity.getName(), modelFilePackage);
             if (out != null) {
                 context.put("entity", this.metaEntity);
                 context.put("properties", this.metaEntity.getColumns());
