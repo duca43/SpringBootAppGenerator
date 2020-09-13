@@ -9,14 +9,14 @@ public class Main {
     public static void main(final String[] args) {
         final MetaLibInfo appInfo = new MetaLibInfo("org.test", "my-app", "0.0.1-SNAPSHOT");
         final MetaAppInfo metaAppInfo = new MetaAppInfo(appInfo, "My App", "Some description", 1.8);
-        metaAppInfo.getDependencies().add(new MetaLibInfo("mysql", "mysql-connector-java", "8.0.21"));
+        metaAppInfo.getDependencies().add(new MetaLibInfo("com.h2database", "h2", "1.4.200"));
 
         MetaModel.getInstance().setMetaAppInfo(metaAppInfo);
 
         final String basePackage = metaAppInfo.getInfo().getGroupId() + "." + metaAppInfo.getInfo().getArtifactId().replaceAll("-", "").toLowerCase();
         MetaModel.getInstance().setPackageBase(basePackage);
 
-        final GeneratorOptions generatorOptions = new GeneratorOptions("D:/temp", "pom", "src/main/resources/templates", "{0}.xml", true, null);
+        final GeneratorOptions generatorOptions = new GeneratorOptions("C:/Users/Marko/Desktop/gen", "pom", "src/main/resources/templates", "{0}.xml", true, null);
         final PomGenerator pomGenerator = new PomGenerator(generatorOptions, metaAppInfo);
         pomGenerator.generate();
 
@@ -25,14 +25,14 @@ public class Main {
         final ApplicationGenerator applicationGenerator = new ApplicationGenerator(generatorOptions, metaAppInfo);
         applicationGenerator.generate();
 
-        final MetaColumn metaColumn1 = new MetaColumn("id", "Integer", "private", 1, 1, true, null, true);
-        final MetaColumn metaColumn12 = new MetaColumn("id2", "Integer", "private", 1, 1, true, null, true);
-        final MetaColumn metaColumn2 = new MetaColumn("username", "String", "private", 1, 1, true, "ManyToOne", false);
+//        final MetaColumn metaColumn1 = new MetaColumn("id", "Integer", "private", 1, 1, true, null, true);
+//        final MetaColumn metaColumn12 = new MetaColumn("id2", "Integer", "private", 1, 1, true, null, true);
+        final MetaColumn metaColumn2 = new MetaColumn("username", "String", "private", 1, 1, true, null, false);
         final MetaColumn metaColumn3 = new MetaColumn("password", "String", "private", 1, 1, false, null, false);
 
         final MetaEntity metaEntity = new MetaEntity("User", "public");
-        metaEntity.getColumns().add(metaColumn1);
-        metaEntity.getColumns().add(metaColumn12);
+//        metaEntity.getColumns().add(metaColumn1);
+//        metaEntity.getColumns().add(metaColumn12);
         metaEntity.getColumns().add(metaColumn2);
         metaEntity.getColumns().add(metaColumn3);
 
@@ -90,6 +90,17 @@ public class Main {
         generatorOptions.setOverwrite(false);
         final ServiceImplGenerator serviceImplGenerator = new ServiceImplGenerator(generatorOptions, metaEntity);
         serviceImplGenerator.generate();
+
+        generatorOptions.setTemplateDir("src/main/resources/templates/controller");
+        generatorOptions.setTemplateName("controller_base");
+        generatorOptions.setOverwrite(true);
+        final ControllerBaseGenerator controllerBaseGenerator = new ControllerBaseGenerator(generatorOptions, metaEntity);
+        controllerBaseGenerator.generate();
+
+        generatorOptions.setTemplateName("controller");
+        generatorOptions.setOverwrite(false);
+        final ControllerGenerator controllerGenerator = new ControllerGenerator(generatorOptions, metaEntity);
+        controllerGenerator.generate();
 
         generatorOptions.setTemplateDir("src/main/resources/templates/exception");
         generatorOptions.setTemplateName("no_entity_found_exception");
