@@ -13,6 +13,7 @@ import java.util.List;
 public class MetaEntity extends MetaElement {
 	private String visibility;
 	private List<MetaColumn> columns = new ArrayList<>();
+	private String primaryKeyName;
 	private String primaryKeyType;
 	private Integer primaryKeyColumnCounter;
 

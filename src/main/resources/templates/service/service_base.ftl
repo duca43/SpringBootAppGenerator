@@ -1,7 +1,9 @@
 package ${packageBase}.service.base;
 
 import ${packageBase}.model.${entity.name};
-
+<#if entity.primaryKeyColumnCounter gt 1>
+import ${packageBase}.model.${entity.primaryKeyType};
+</#if>
 import java.util.List;
 
 public interface ${entity.name}ServiceBase {
@@ -14,5 +16,7 @@ public interface ${entity.name}ServiceBase {
 
     ${entity.name} update(${entity.name} ${entity.name?uncap_first});
 
-    void delete(${entity.primaryKeyType} id);
+    void deleteById(${entity.primaryKeyType} id);
+
+    void deleteAll();
 }

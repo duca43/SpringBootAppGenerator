@@ -16,7 +16,7 @@ public class Main {
         final String basePackage = metaAppInfo.getInfo().getGroupId() + "." + metaAppInfo.getInfo().getArtifactId().replaceAll("-", "").toLowerCase();
         MetaModel.getInstance().setPackageBase(basePackage);
 
-        final GeneratorOptions generatorOptions = new GeneratorOptions("E:/temp", "pom", "src/main/resources/templates", "{0}.xml", true, null);
+        final GeneratorOptions generatorOptions = new GeneratorOptions("D:/temp", "pom", "src/main/resources/templates", "{0}.xml", true, null);
         final PomGenerator pomGenerator = new PomGenerator(generatorOptions, metaAppInfo);
         pomGenerator.generate();
 
@@ -44,8 +44,8 @@ public class Main {
 
 
         int pkColumnsCounter = 0;
-        List<MetaColumn> columns = new ArrayList<>();
-        for (MetaColumn column : metaEntity.getColumns()) {
+        final List<MetaColumn> columns = new ArrayList<>();
+        for (final MetaColumn column : metaEntity.getColumns()) {
             if (column.isPartOfPrimaryKey()) {
                 pkColumnsCounter++;
                 columns.add(column);
@@ -79,5 +79,22 @@ public class Main {
         generatorOptions.setOverwrite(false);
         final ServiceGenerator serviceGenerator = new ServiceGenerator(generatorOptions, metaEntity);
         serviceGenerator.generate();
+
+        generatorOptions.setTemplateDir("src/main/resources/templates/service/impl");
+        generatorOptions.setTemplateName("service_impl_base");
+        generatorOptions.setOverwrite(true);
+        final ServiceImplBaseGenerator serviceImplBaseGenerator = new ServiceImplBaseGenerator(generatorOptions, metaEntity);
+        serviceImplBaseGenerator.generate();
+
+        generatorOptions.setTemplateName("service_impl");
+        generatorOptions.setOverwrite(false);
+        final ServiceImplGenerator serviceImplGenerator = new ServiceImplGenerator(generatorOptions, metaEntity);
+        serviceImplGenerator.generate();
+
+        generatorOptions.setTemplateDir("src/main/resources/templates/exception");
+        generatorOptions.setTemplateName("no_entity_found_exception");
+        generatorOptions.setOverwrite(true);
+        final NoEntityFoundExceptionGenerator noEntityFoundExceptionGenerator = new NoEntityFoundExceptionGenerator(generatorOptions, metaEntity);
+        noEntityFoundExceptionGenerator.generate();
     }
 }
