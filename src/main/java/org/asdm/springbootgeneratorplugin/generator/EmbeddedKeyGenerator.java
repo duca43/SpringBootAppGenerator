@@ -1,4 +1,7 @@
+package org.asdm.springbootgeneratorplugin.generator;
+
 import freemarker.template.TemplateException;
+import org.asdm.springbootgeneratorplugin.model.MetaColumn;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
 
@@ -6,6 +9,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,13 +21,15 @@ import java.util.Map;
  * complete ejb classes
  */
 
-public class ServiceGenerator extends BasicGenerator {
+public class EmbeddedKeyGenerator extends BasicGenerator {
 
     private final MetaEntity metaEntity;
+    private final List<MetaColumn> metaColumns;
 
-    public ServiceGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity) {
+    public EmbeddedKeyGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity, List<MetaColumn> metaColumns) {
         super(generatorOptions);
         this.metaEntity = metaEntity;
+        this.metaColumns = metaColumns;
     }
 
     @Override
@@ -38,10 +44,11 @@ public class ServiceGenerator extends BasicGenerator {
         final Writer out;
         final Map<String, Object> context = new HashMap<String, Object>();
         try {
-            final String serviceFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/service";
-            out = this.getWriter(this.metaEntity.getName() + "Service", serviceFilePackage);
+            final String modelFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/model";
+            out = this.getWriter(this.metaEntity.getName() + "Id", modelFilePackage);
             if (out != null) {
                 context.put("entity", this.metaEntity);
+                context.put("properties", this.metaColumns);
                 context.put("packageBase", MetaModel.getInstance().getPackageBase());
                 this.getTemplate().process(context, out);
                 out.flush();

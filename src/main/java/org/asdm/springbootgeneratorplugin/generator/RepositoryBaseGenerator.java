@@ -1,4 +1,7 @@
+package org.asdm.springbootgeneratorplugin.generator;
+
 import freemarker.template.TemplateException;
+import org.asdm.springbootgeneratorplugin.model.MetaColumn;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
 
@@ -17,11 +20,11 @@ import java.util.Map;
  * complete ejb classes
  */
 
-public class RepositoryGenerator extends BasicGenerator {
+public class RepositoryBaseGenerator extends BasicGenerator {
 
     private final MetaEntity metaEntity;
 
-    public RepositoryGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity) {
+    public RepositoryBaseGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity) {
         super(generatorOptions);
         this.metaEntity = metaEntity;
     }
@@ -35,11 +38,28 @@ public class RepositoryGenerator extends BasicGenerator {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
+        int pkColumnsCounter = 0;
+        String pkType = "";
+        for (final MetaColumn metaColumn : this.metaEntity.getColumns()) {
+            if (metaColumn.isPartOfPrimaryKey()) {
+                pkColumnsCounter++;
+                pkType = metaColumn.getType();
+            }
+        }
+
+        if (pkColumnsCounter == 0) {
+            this.metaEntity.setPrimaryKeyType("Long");
+        } else if (pkColumnsCounter == 1) {
+            this.metaEntity.setPrimaryKeyType(pkType);
+        } else {
+            this.metaEntity.setPrimaryKeyType(this.metaEntity.getName() + "Id");
+        }
+
         final Writer out;
         final Map<String, Object> context = new HashMap<String, Object>();
         try {
-            final String repoFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/repository";
-            out = this.getWriter(this.metaEntity.getName() + "Repository", repoFilePackage);
+            final String repoBaseFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/repository/base";
+            out = this.getWriter(this.metaEntity.getName() + "RepositoryBase", repoBaseFilePackage);
             if (out != null) {
                 context.put("entity", this.metaEntity);
                 context.put("packageBase", MetaModel.getInstance().getPackageBase());

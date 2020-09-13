@@ -1,3 +1,5 @@
+package org.asdm.springbootgeneratorplugin.generator;
+
 import freemarker.template.TemplateException;
 import org.asdm.springbootgeneratorplugin.model.MetaAppInfo;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
@@ -50,19 +52,19 @@ public class ApplicationGenerator extends BasicGenerator {
         }
     }
 
-    private String modifyName(String artifactId){
+    private String modifyName(String artifactId) {
         StringBuilder builder = new StringBuilder();
-        if (artifactId.contains("_")){
+        if (artifactId.contains("_")) {
             String[] words = artifactId.split("_");
-            for(String word: words){
+            for (String word : words) {
                 builder.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
             }
-        }else if(artifactId.contains("-")){
+        } else if (artifactId.contains("-")) {
             String[] words = artifactId.split("-");
-            for(String word: words){
+            for (String word : words) {
                 builder.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
             }
-        }else{
+        } else {
             builder.append(artifactId.substring(0, 1).toUpperCase()).append(artifactId.substring(1));
         }
         return builder.toString();

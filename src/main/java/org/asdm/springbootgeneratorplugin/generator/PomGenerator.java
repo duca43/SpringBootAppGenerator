@@ -1,3 +1,5 @@
+package org.asdm.springbootgeneratorplugin.generator;
+
 import freemarker.template.TemplateException;
 import org.asdm.springbootgeneratorplugin.model.MetaAppInfo;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;

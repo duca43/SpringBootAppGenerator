@@ -1,3 +1,4 @@
+import org.asdm.springbootgeneratorplugin.generator.*;
 import org.asdm.springbootgeneratorplugin.model.*;
 
 import java.util.ArrayList;
@@ -44,13 +45,13 @@ public class Main {
 
         int pkColumnsCounter = 0;
         List<MetaColumn> columns = new ArrayList<>();
-        for (MetaColumn column: metaEntity.getColumns()){
-            if (column.isPartOfPrimaryKey()){
+        for (MetaColumn column : metaEntity.getColumns()) {
+            if (column.isPartOfPrimaryKey()) {
                 pkColumnsCounter++;
                 columns.add(column);
             }
         }
-        if (pkColumnsCounter > 1){
+        if (pkColumnsCounter > 1) {
             generatorOptions.setTemplateName("embedded_key");
             generatorOptions.setOutputFileName("{0}.java");
             final EmbeddedKeyGenerator embeddedKeyGenerator = new EmbeddedKeyGenerator(generatorOptions, metaEntity, columns);

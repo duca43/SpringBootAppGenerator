@@ -1,3 +1,5 @@
+package org.asdm.springbootgeneratorplugin.generator;
+
 import freemarker.template.TemplateException;
 import org.asdm.springbootgeneratorplugin.model.MetaColumn;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
@@ -7,7 +9,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,15 +20,13 @@ import java.util.Map;
  * complete ejb classes
  */
 
-public class EmbeddedKeyGenerator extends BasicGenerator {
+public class ServiceBaseGenerator extends BasicGenerator {
 
     private final MetaEntity metaEntity;
-    private List<MetaColumn> metaColumns;
 
-    public EmbeddedKeyGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity, List<MetaColumn> metaColumns) {
+    public ServiceBaseGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity) {
         super(generatorOptions);
         this.metaEntity = metaEntity;
-        this.metaColumns = metaColumns;
     }
 
     @Override
@@ -39,14 +38,30 @@ public class EmbeddedKeyGenerator extends BasicGenerator {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
+        int pkColumnsCounter = 0;
+        String pkType = "";
+        for (final MetaColumn metaColumn : this.metaEntity.getColumns()) {
+            if (metaColumn.isPartOfPrimaryKey()) {
+                pkColumnsCounter++;
+                pkType = metaColumn.getType();
+            }
+        }
+
+        if (pkColumnsCounter == 0) {
+            this.metaEntity.setPrimaryKeyType("Long");
+        } else if (pkColumnsCounter == 1) {
+            this.metaEntity.setPrimaryKeyType(pkType);
+        } else {
+            this.metaEntity.setPrimaryKeyType(this.metaEntity.getName() + "Id");
+        }
+
         final Writer out;
         final Map<String, Object> context = new HashMap<String, Object>();
         try {
-            final String modelFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/model";
-            out = this.getWriter(this.metaEntity.getName() + "Id", modelFilePackage);
+            final String serviceBaseFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/service/base";
+            out = this.getWriter(this.metaEntity.getName() + "ServiceBase", serviceBaseFilePackage);
             if (out != null) {
                 context.put("entity", this.metaEntity);
-                context.put("properties", this.metaColumns);
                 context.put("packageBase", MetaModel.getInstance().getPackageBase());
                 this.getTemplate().process(context, out);
                 out.flush();
