@@ -61,7 +61,7 @@ public abstract class BasicGenerator {
     }
 
     public Writer getWriter(final String fileNamePart, final String packageName) throws IOException {
-        if (packageName.equals(this.generatorOptions.getFilePackage())) {
+        if (!packageName.equals(this.generatorOptions.getFilePackage())) {
             this.generatorOptions.setFilePackage(packageName.replace(".", File.separator));
         }
 
