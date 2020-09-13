@@ -6,11 +6,11 @@ import ${packageBase}.model.${entity.name};
 import ${packageBase}.model.${entity.primaryKeyType};
 </#if>
 import ${packageBase}.repository.base.${entity.name}RepositoryBase;
-import ${packageBase}.service.${entity.name}Service;
+import ${packageBase}.service.base.${entity.name}ServiceBase;
 
 import java.util.List;
 
-public abstract class ${entity.name}ServiceImplBase implements ${entity.name}Service {
+public abstract class ${entity.name}ServiceImplBase implements ${entity.name}ServiceBase {
 
     protected abstract ${entity.name}RepositoryBase get${entity.name}Repository();
 
