@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public abstract class ${entity.name}ServiceImpl extends ${entity.name}ServiceImplBase {
+public class ${entity.name}ServiceImpl extends ${entity.name}ServiceImplBase {
 
     private ${entity.name}Repository ${entity.name?uncap_first}Repository;
 
