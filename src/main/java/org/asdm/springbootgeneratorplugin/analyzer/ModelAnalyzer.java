@@ -2,9 +2,9 @@ package org.asdm.springbootgeneratorplugin.analyzer;
 
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.*;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.*;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 import org.asdm.springbootgeneratorplugin.model.MetaColumn;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
@@ -13,7 +13,6 @@ import org.asdm.springbootgeneratorplugin.model.MetaModel;
 
 import java.util.Iterator;
 import java.util.List;
-
 
 public class ModelAnalyzer {
     //root model package
@@ -39,8 +38,10 @@ public class ModelAnalyzer {
     }
 
     private void processPackage(final Package pack, final String packageOwner) throws AnalyzeException {
-        if (pack.getName() == null) throw
-                new AnalyzeException("Packages must have names!");
+        if (pack.getName() == null) {
+            throw
+                    new AnalyzeException("Packages must have names!");
+        }
 
         String packageName = packageOwner;
         if (pack != this.root) {
@@ -71,10 +72,14 @@ public class ModelAnalyzer {
     }
 
     private MetaEntity getClassData(final Class cl) throws AnalyzeException {
-        if (cl.getName() == null)
+        if (cl.getName() == null) {
             throw new AnalyzeException("Classes must have names!");
+        }
 
-        final MetaEntity metaEntity = new MetaEntity(cl.getName(), cl.getVisibility().toString());
+        final MetaEntity metaEntity = MetaEntity.builder()
+                .name(cl.getName())
+                .visibility(cl.getVisibility().toString())
+                .build();
         final Iterator<Property> it = ModelHelper.attributes(cl);
 
         final Iterator<Association> associations = ModelHelper.associations(cl);
@@ -148,27 +153,30 @@ public class ModelAnalyzer {
 
     private MetaColumn getPropertyData(final Property p, final Class cl, RelationshipType relationshipType) throws AnalyzeException {
         final String attName = p.getName();
-        if (attName == null)
+        if (attName == null) {
             throw new AnalyzeException("Properties of the class: " + cl.getName() +
                     " must have names!");
+        }
         final Type attType = p.getType();
-        if (attType == null)
+        if (attType == null) {
             throw new AnalyzeException("Property " + cl.getName() + "." +
                     p.getName() + " must have type!");
+        }
 
         final String typeName = attType.getName();
-        if (typeName == null)
+        if (typeName == null) {
             throw new AnalyzeException("Type ot the property " + cl.getName() + "." +
                     p.getName() + " must have name!");
+        }
 
         final int lower = p.getLower();
         final int upper = p.getUpper();
 
         boolean isPartOfPrimaryKey = false;
         final List<Stereotype> stereotypes = StereotypesHelper.getStereotypes(p);
-        if (!stereotypes.isEmpty()){
-            for (Stereotype stereotype: stereotypes){
-                if (stereotype.getName().equals("PrimaryKey")){
+        if (!stereotypes.isEmpty()) {
+            for (Stereotype stereotype : stereotypes) {
+                if (stereotype.getName().equals("PrimaryKey")) {
                     isPartOfPrimaryKey = true;
                 }
             }
@@ -176,18 +184,29 @@ public class ModelAnalyzer {
 
         //TODO: Create stereotype enum
 
-        return new MetaColumn(attName, typeName, p.getVisibility().toString(),
-                lower, upper, p.isUnique(), relationshipType.toString(), isPartOfPrimaryKey);
+        return MetaColumn.builder()
+                .name(attName)
+                .type(typeName)
+                .visibility(p.getVisibility().toString())
+                .lower(lower)
+                .upper(upper)
+                .unique(p.isUnique())
+                .relationshipType(relationshipType.name())
+                .partOfPrimaryKey(isPartOfPrimaryKey)
+                .build();
     }
 
     private MetaEnumeration getEnumerationData(final Enumeration enumeration) throws AnalyzeException {
-        final MetaEnumeration metaEnumeration = new MetaEnumeration(enumeration.getName());
+        final MetaEnumeration metaEnumeration = MetaEnumeration.builder()
+                .name(enumeration.getName())
+                .build();
         final List<EnumerationLiteral> list = enumeration.getOwnedLiteral();
         for (int i = 0; i < list.size() - 1; i++) {
             final EnumerationLiteral literal = list.get(i);
-            if (literal.getName() == null)
+            if (literal.getName() == null) {
                 throw new AnalyzeException("Items of the metaEnumeration " + metaEnumeration.getName() +
                         " must have names!");
+            }
             metaEnumeration.getValues().add(literal.getName());
         }
         return metaEnumeration;

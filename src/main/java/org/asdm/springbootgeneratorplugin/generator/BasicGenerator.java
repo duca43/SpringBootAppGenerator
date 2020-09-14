@@ -4,6 +4,7 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 
@@ -14,6 +15,7 @@ import java.io.*;
  */
 
 @Data
+@Slf4j
 public abstract class BasicGenerator {
 
     private final GeneratorOptions generatorOptions;
@@ -43,7 +45,7 @@ public abstract class BasicGenerator {
         final String tName = this.generatorOptions.getTemplateName() + ".ftl";
         try {
             final File dir = new File(this.generatorOptions.getTemplateDir());
-            System.out.println(dir.getAbsolutePath());
+            log.info("Path: {}", dir.getAbsolutePath());
             this.cfg.setDirectoryForTemplateLoading(dir);
             this.template = this.cfg.getTemplate(tName);
             final DefaultObjectWrapperBuilder builder =
@@ -72,15 +74,13 @@ public abstract class BasicGenerator {
                 + this.generatorOptions.getOutputFileName().replace("{0}", fileNamePart);
 
         final File of = new File(fullPath);
-        if (!of.getParentFile().exists()) {
-            if (!of.getParentFile().mkdirs()) {
-                throw new IOException("An error occurred during output folder creation "
-                        + this.generatorOptions.getOutputPath());
-            }
+        if (!of.getParentFile().exists() && !of.getParentFile().mkdirs()) {
+            throw new IOException("An error occurred during output folder creation "
+                    + this.generatorOptions.getOutputPath());
         }
 
-        System.out.println(of.getPath());
-        System.out.println(of.getName());
+        log.info("File path: {}", of.getPath());
+        log.info("File name: {}", of.getName());
 
         if (!this.generatorOptions.getOverwrite() && of.exists()) {
             return null;

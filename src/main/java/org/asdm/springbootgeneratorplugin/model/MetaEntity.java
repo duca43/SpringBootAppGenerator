@@ -2,23 +2,17 @@ package org.asdm.springbootgeneratorplugin.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class MetaEntity extends MetaElement {
-	private String visibility;
-	private List<MetaColumn> columns = new ArrayList<>();
-	private String primaryKeyName;
-	private String primaryKeyType;
-	private Integer primaryKeyColumnCounter;
-
-	public MetaEntity(final String name, final String visibility) {
-		super(name);
-		this.visibility = visibility;
-	}
+    private String visibility;
+    private List<MetaColumn> columns;
+    private String primaryKeyName;
+    private String primaryKeyType;
+    private Integer primaryKeyColumnCounter;
 }

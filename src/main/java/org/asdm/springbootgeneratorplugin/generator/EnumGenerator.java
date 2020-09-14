@@ -29,7 +29,7 @@ public class EnumGenerator extends BasicGenerator {
         }
 
         final Writer out;
-        final Map<String, Object> context = new HashMap<String, Object>();
+        final Map<String, Object> context = new HashMap<>();
         try {
             final String modelFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/model";
             out = this.getWriter(this.metaEnumeration.getName() + "Enum", modelFilePackage);

@@ -10,14 +10,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * EJB generator that now generates incomplete ejb classes based on MagicDraw
- * class model
- *
- * @ToDo: enhance resources/templates/ejbclass.ftl template and intermediate
- * data structure (@see myplugin.generator.fmmodel) in order to generate
- * complete ejb classes
- */
 public class ApplicationGenerator extends BasicGenerator {
 
     private final MetaAppInfo metaAppInfo;
@@ -37,7 +29,7 @@ public class ApplicationGenerator extends BasicGenerator {
         }
 
         final Writer out;
-        final Map<String, Object> context = new HashMap<String, Object>();
+        final Map<String, Object> context = new HashMap<>();
         try {
             final String serviceFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase();
             out = this.getWriter(modifyName(this.metaAppInfo.getInfo().getArtifactId()) + "Application", serviceFilePackage);

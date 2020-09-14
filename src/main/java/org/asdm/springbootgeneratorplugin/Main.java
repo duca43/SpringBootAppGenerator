@@ -1,3 +1,5 @@
+package org.asdm.springbootgeneratorplugin;
+
 import org.asdm.springbootgeneratorplugin.generator.*;
 import org.asdm.springbootgeneratorplugin.model.*;
 
@@ -27,16 +29,24 @@ public class Main {
 
 //        final MetaColumn metaColumn1 = new MetaColumn("id", "Integer", "private", 1, 1, true, null, true);
 //        final MetaColumn metaColumn12 = new MetaColumn("id2", "Integer", "private", 1, 1, true, null, true);
-        final MetaColumn metaColumn2 = new MetaColumn("username", "String", "private", 1, 1, true, null, false);
-        final MetaColumn metaColumn3 = new MetaColumn("password", "String", "private", 1, 1, false, null, false);
+        final MetaColumn metaColumn2 = MetaColumn.builder().name("username").type("String").visibility("private").lower(1).upper(1)
+                .unique(true).relationshipType(null).partOfPrimaryKey(false).build();
+        final MetaColumn metaColumn3 = MetaColumn.builder().name("password").type("String").visibility("private").lower(1).upper(1)
+                .unique(false).relationshipType(null).partOfPrimaryKey(false).build();
 
-        final MetaEntity metaEntity = new MetaEntity("User", "public");
+        final MetaEntity metaEntity = MetaEntity.builder()
+                .name("User")
+                .visibility("public")
+                .columns(new ArrayList<>())
+                .build();
 //        metaEntity.getColumns().add(metaColumn1);
 //        metaEntity.getColumns().add(metaColumn12);
         metaEntity.getColumns().add(metaColumn2);
         metaEntity.getColumns().add(metaColumn3);
 
-        final MetaEnumeration metaEnumeration = new MetaEnumeration("UserType");
+        final MetaEnumeration metaEnumeration = MetaEnumeration.builder()
+                .name("UserType")
+                .build();
         metaEnumeration.getValues().add("ADMINISTRATOR");
         metaEnumeration.getValues().add("AUTHOR");
         metaEnumeration.getValues().add("USER");

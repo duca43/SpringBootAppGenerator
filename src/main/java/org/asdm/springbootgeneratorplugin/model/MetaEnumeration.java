@@ -1,22 +1,18 @@
 package org.asdm.springbootgeneratorplugin.model;
 
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-@NoArgsConstructor
+@Data
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class MetaEnumeration extends MetaElement {
 
-	@Getter
-	private final List<String> values = new ArrayList<>();
-
-	public MetaEnumeration(final String name) {
-		super(name);
-	}
+    private final List<String> values = new ArrayList<>();
 }

@@ -12,15 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * EJB generator that now generates incomplete ejb classes based on MagicDraw
- * class model
- *
- * @ToDo: enhance resources/templates/ejbclass.ftl template and intermediate
- * data structure (@see myplugin.generator.fmmodel) in order to generate
- * complete ejb classes
- */
-
 public class EmbeddedKeyGenerator extends BasicGenerator {
 
     private final MetaEntity metaEntity;
@@ -42,7 +33,7 @@ public class EmbeddedKeyGenerator extends BasicGenerator {
         }
 
         final Writer out;
-        final Map<String, Object> context = new HashMap<String, Object>();
+        final Map<String, Object> context = new HashMap<>();
         try {
             final String modelFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/model";
             out = this.getWriter(this.metaEntity.getName() + "Id", modelFilePackage);
