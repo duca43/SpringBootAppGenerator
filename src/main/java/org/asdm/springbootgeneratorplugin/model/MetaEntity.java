@@ -15,4 +15,5 @@ public class MetaEntity extends MetaElement {
     private String primaryKeyName;
     private String primaryKeyType;
     private Integer primaryKeyColumnCounter;
+	private List<String> imports;
 }

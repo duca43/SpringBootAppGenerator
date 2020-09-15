@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeMappings>
+    <typeMapping>
+        <modelType>bigint</modelType>
+        <destinationType>Long</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>binary large object</modelType>
+        <destinationType>byte[]</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>blob</modelType>
+        <destinationType>byte[]</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>boolean</modelType>
+        <destinationType>Boolean</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>Boolean</modelType>
+        <destinationType>Boolean</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>byte</modelType>
+        <destinationType>Byte</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>char</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>character</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>character large object</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>character varying</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>char large object</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>char varying</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>clob</modelType>
+        <destinationType>byte[]</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>date</modelType>
+        <destinationType>LocalDate</destinationType>
+        <libraryName>java.time.LocalDate</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>dec</modelType>
+        <destinationType>Double</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>decimal</modelType>
+        <destinationType>Double</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>double</modelType>
+        <destinationType>Double</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>double precision</modelType>
+        <destinationType>Double</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>float</modelType>
+        <destinationType>Float</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>int</modelType>
+        <destinationType>Integer</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>integer</modelType>
+        <destinationType>Integer</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>Integer</modelType>
+        <destinationType>Integer</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>interval</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>national char</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>national character</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>national character large object</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>national character varying</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>national char varying</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>nchar</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>nchar large object</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>nchar varying</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>nclob</modelType>
+        <destinationType>byte[]</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>numeric</modelType>
+        <destinationType>Integer</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>long</modelType>
+        <destinationType>Long</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>Real</modelType>
+        <destinationType>Double</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>real</modelType>
+        <destinationType>Double</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>short</modelType>
+        <destinationType>Short</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>small int</modelType>
+        <destinationType>Short</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>String</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>time</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>timestamp</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>timestamp without timezone</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>timestamp with timezone</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>time without timezone</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>time with timezone</modelType>
+        <destinationType>LocalDateTime</destinationType>
+        <libraryName>java.time.LocalDateTime</libraryName>
+    </typeMapping>
+    <typeMapping>
+        <modelType>UnlimitedNatural</modelType>
+        <destinationType>Character</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>varchar</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>void</modelType>
+        <destinationType>Void</destinationType>
+    </typeMapping>
+    <typeMapping>
+        <modelType>xml</modelType>
+        <destinationType>String</destinationType>
+    </typeMapping>
+</typeMappings>

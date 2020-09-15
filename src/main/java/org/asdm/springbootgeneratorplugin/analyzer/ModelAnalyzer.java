@@ -10,9 +10,12 @@ import org.asdm.springbootgeneratorplugin.model.MetaColumn;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
 import org.asdm.springbootgeneratorplugin.model.MetaEnumeration;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
+import org.asdm.springbootgeneratorplugin.util.XmlParser;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ModelAnalyzer {
     //root model package
@@ -21,10 +24,15 @@ public class ModelAnalyzer {
     //java root package for generated code
     private final String filePackage;
 
+    private Map<String, TypeMapping> typeMappingMap;
+    private List<String> libraries;
+
     public ModelAnalyzer(final Package root, final String filePackage) {
         super();
         this.root = root;
         this.filePackage = filePackage;
+        this.typeMappingMap = XmlParser.parseTypeMappingXml();
+        this.libraries = new ArrayList<>();
     }
 
     public Package getRoot() {
@@ -79,8 +87,12 @@ public class ModelAnalyzer {
         final MetaEntity metaEntity = MetaEntity.builder()
                 .name(cl.getName())
                 .visibility(cl.getVisibility().toString())
+                .columns(new ArrayList<MetaColumn>())
+                .imports(new ArrayList<String>())
                 .build();
         final Iterator<Property> it = ModelHelper.attributes(cl);
+
+        this.libraries.clear();
 
         final Iterator<Association> associations = ModelHelper.associations(cl);
         RelationshipType relationshipType = RelationshipType.NONE;
@@ -124,6 +136,10 @@ public class ModelAnalyzer {
             metaEntity.getColumns().add(metaColumn);
         }
 
+        for (String library: this.libraries){
+            metaEntity.getImports().add(library);
+        }
+
         int pkColumnsCounter = 0;
         String pkType = "";
         String pkName = "";
@@ -163,14 +179,25 @@ public class ModelAnalyzer {
                     p.getName() + " must have type!");
         }
 
-        final String typeName = attType.getName();
+        String typeName = attType.getName();
         if (typeName == null) {
+
             throw new AnalyzeException("Type ot the property " + cl.getName() + "." +
                     p.getName() + " must have name!");
         }
 
         final int lower = p.getLower();
         final int upper = p.getUpper();
+
+        if (this.typeMappingMap.containsKey(typeName)) {
+            TypeMapping typeMapping = this.typeMappingMap.get(typeName);
+            typeName = typeMapping.getDestinationType();
+            if (typeMapping.getLibraryName() != null){
+                if (!this.libraries.contains(typeMapping.getLibraryName())) {
+                    this.libraries.add(typeMapping.getLibraryName());
+                }
+            }
+        }
 
         boolean isPartOfPrimaryKey = false;
         final List<Stereotype> stereotypes = StereotypesHelper.getStereotypes(p);

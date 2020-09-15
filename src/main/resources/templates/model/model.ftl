@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+<#list libraries as library>
+import ${library};
+</#list>
 
 @Data
 @NoArgsConstructor

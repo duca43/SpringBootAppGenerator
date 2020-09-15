@@ -37,7 +37,7 @@ public class Main {
         final MetaEntity metaEntity = MetaEntity.builder()
                 .name("User")
                 .visibility("public")
-                .columns(new ArrayList<>())
+                .columns(new ArrayList<MetaColumn>())
                 .build();
 //        metaEntity.getColumns().add(metaColumn1);
 //        metaEntity.getColumns().add(metaColumn12);

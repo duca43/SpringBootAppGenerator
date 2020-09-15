@@ -35,6 +35,7 @@ public class ModelGenerator extends BasicGenerator {
             out = this.getWriter(this.metaEntity.getName(), modelFilePackage);
             if (out != null) {
                 context.put("entity", this.metaEntity);
+                context.put("libraries", this.metaEntity.getImports());
                 context.put("properties", this.metaEntity.getColumns());
                 context.put("packageBase", MetaModel.getInstance().getPackageBase());
                 this.getTemplate().process(context, out);
