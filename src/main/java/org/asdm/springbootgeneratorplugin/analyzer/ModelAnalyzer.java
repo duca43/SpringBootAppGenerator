@@ -3,6 +3,7 @@ package org.asdm.springbootgeneratorplugin.analyzer;
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Enumeration;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.*;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
@@ -12,9 +13,7 @@ import org.asdm.springbootgeneratorplugin.model.MetaEnumeration;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
 import org.asdm.springbootgeneratorplugin.util.Constants;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ModelAnalyzer {
     private final Package root;
@@ -77,7 +76,7 @@ public class ModelAnalyzer {
         this.libraries.clear();
 
         final Iterator<Association> associations = ModelHelper.associations(clazz);
-        RelationshipType relationshipType = RelationshipType.NONE;
+        Map<Property, RelationshipType> relationshipTypeMap = new HashMap<>();
         while (associations.hasNext()) {
             final Association association = associations.next();
 
@@ -89,31 +88,35 @@ public class ModelAnalyzer {
 
             if (firstMemberEnd.getClassifier() != null && firstMemberEnd.getClassifier().getName().equals(clazz.getName())) {
                 if (firstMemberEndUpper == -1 && secondMemberEndUpper == -1) {
-                    relationshipType = RelationshipType.MANY_TO_MANY;
+                    relationshipTypeMap.put(firstMemberEnd, RelationshipType.MANY_TO_MANY);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == 1) {
-                    relationshipType = RelationshipType.ONE_TO_ONE;
+                    relationshipTypeMap.put(firstMemberEnd, RelationshipType.ONE_TO_ONE);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == -1) {
-                    relationshipType = RelationshipType.MANY_TO_ONE;
+                    relationshipTypeMap.put(firstMemberEnd, RelationshipType.MANY_TO_ONE);
                 } else {
-                    relationshipType = RelationshipType.ONE_TO_MANY;
+                    relationshipTypeMap.put(firstMemberEnd, RelationshipType.ONE_TO_MANY);
                 }
             }
 
             if (secondMemberEnd.getClassifier() != null && secondMemberEnd.getClassifier().getName().equals(clazz.getName())) {
                 if (firstMemberEndUpper == -1 && secondMemberEndUpper == -1) {
-                    relationshipType = RelationshipType.MANY_TO_MANY;
+                    relationshipTypeMap.put(secondMemberEnd, RelationshipType.MANY_TO_MANY);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == 1) {
-                    relationshipType = RelationshipType.ONE_TO_ONE;
+                    relationshipTypeMap.put(secondMemberEnd, RelationshipType.ONE_TO_ONE);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == -1) {
-                    relationshipType = RelationshipType.ONE_TO_MANY;
+                    relationshipTypeMap.put(secondMemberEnd, RelationshipType.ONE_TO_MANY);
                 } else {
-                    relationshipType = RelationshipType.MANY_TO_ONE;
+                    relationshipTypeMap.put(secondMemberEnd, RelationshipType.MANY_TO_ONE);
                 }
             }
         }
 
         while (it.hasNext()) {
             final Property p = it.next();
+            RelationshipType relationshipType = RelationshipType.NONE;
+            if (relationshipTypeMap.containsKey(p)){
+                relationshipType = relationshipTypeMap.get(p);
+            }
             final MetaColumn metaColumn = this.getPropertyData(p, clazz, relationshipType);
             metaEntity.getColumns().add(metaColumn);
         }
