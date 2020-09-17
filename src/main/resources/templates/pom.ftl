@@ -5,11 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.3.RELEASE</version>
+        <version>${appInfo.springBootVersion}</version>
     </parent>
     <groupId>${appInfo.info.groupId}</groupId>
     <artifactId>${appInfo.info.artifactId}</artifactId>
     <version>${appInfo.info.version}</version>
+    <packaging>${appInfo.packaging}</packaging>
     <name>${appInfo.name}</name>
     <description>${appInfo.description}</description>
 
@@ -35,7 +36,12 @@
         <dependency>
             <groupId>${dependency.groupId}</groupId>
             <artifactId>${dependency.artifactId}</artifactId>
+            <#if dependency.version??>
             <version>${dependency.version}</version>
+            </#if>
+            <#if dependency.scope??>
+            <scope>${dependency.scope}</scope>
+            </#if>
         </dependency>
         </#list>
         <dependency>

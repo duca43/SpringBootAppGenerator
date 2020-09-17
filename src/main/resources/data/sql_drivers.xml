@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependencies>
+    <dependency>
+        <displayName>H2 Database</displayName>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <displayName>MS SQL Server Driver</displayName>
+        <groupId>com.microsoft.sqlserver</groupId>
+        <artifactId>mssql-jdbc</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <displayName>Oracle Driver</displayName>
+        <groupId>com.oracle.database.jdbc</groupId>
+        <artifactId>ojdbc8</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <displayName>MySQL Driver</displayName>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <displayName>Apache Derby Database</displayName>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <displayName>HyperSQL Database</displayName>
+        <groupId>org.hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <displayName>PostgreSQL Driver</displayName>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>

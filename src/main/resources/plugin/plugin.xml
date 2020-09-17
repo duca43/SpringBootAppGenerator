@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+        id="org.asdm.springbootgeneratorplugin"
+        name="Spring Boot App Generator Plugin"
+        version="1.0"
+        provider-name="TakeOff team"
+        class="org.asdm.springbootgeneratorplugin.GeneratorPlugin">
+    <requires>
+        <api version="1.0"/>
+    </requires>
+    <runtime>
+        <library name="springboot-generator-plugin-0.0.1-SNAPSHOT-jar-with-dependencies.jar"/>
+    </runtime>
+</plugin>

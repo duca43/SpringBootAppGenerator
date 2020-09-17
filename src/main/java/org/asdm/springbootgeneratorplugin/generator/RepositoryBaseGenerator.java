@@ -1,46 +1,49 @@
 package org.asdm.springbootgeneratorplugin.generator;
 
 import freemarker.template.TemplateException;
+import lombok.extern.slf4j.Slf4j;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class RepositoryBaseGenerator extends BasicGenerator {
 
     private final MetaEntity metaEntity;
 
-    public RepositoryBaseGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity) {
-        super(generatorOptions);
+    public RepositoryBaseGenerator(final GeneratorOptions generatorOptions, final MetaEntity metaEntity, final String outputPath) {
+        super(generatorOptions, outputPath);
         this.metaEntity = metaEntity;
     }
 
     @Override
-    public void generate() {
+    public void generate() throws IOException {
 
         try {
             super.generate();
         } catch (final IOException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            throw new IOException(e.getMessage());
         }
 
         final Writer out;
         final Map<String, Object> context = new HashMap<>();
         try {
-            final String repoBaseFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase() + "/repository/base";
-            out = this.getWriter(this.metaEntity.getName() + "RepositoryBase", repoBaseFilePackage);
+            final String filename = this.metaEntity.getName() + "RepositoryBase";
+            out = this.getWriter(filename);
             if (out != null) {
                 context.put("entity", this.metaEntity);
                 context.put("packageBase", MetaModel.getInstance().getPackageBase());
+                log.info("Start generating {}.java...", filename);
                 this.getTemplate().process(context, out);
                 out.flush();
+                log.info("End of generating {}.java...", filename);
             }
         } catch (final TemplateException | IOException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            throw new IOException(e.getMessage());
         }
     }
 }

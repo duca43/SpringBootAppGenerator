@@ -19,15 +19,17 @@ import java.io.*;
 public abstract class BasicGenerator {
 
     private final GeneratorOptions generatorOptions;
-    private Configuration cfg;
+    private Configuration configuration;
     private Template template;
+    protected String outputPath;
 
-    public BasicGenerator(final GeneratorOptions generatorOptions) {
+    public BasicGenerator(final GeneratorOptions generatorOptions, final String outputPath) {
         this.generatorOptions = generatorOptions;
+        this.outputPath = outputPath;
     }
 
     public void generate() throws IOException {
-        if (this.generatorOptions.getOutputPath() == null) {
+        if (this.outputPath == null) {
             throw new IOException("Output path is not defined!");
         }
         if (this.generatorOptions.getTemplateName() == null) {
@@ -36,61 +38,45 @@ public abstract class BasicGenerator {
         if (this.generatorOptions.getOutputFileName() == null) {
             throw new IOException("Output file name is not defined!");
         }
-//        if (this.filePackage == null) {
-//            throw new IOException("Package name for code generation is not defined!");
-//        }
 
-        this.cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+        this.configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
-        final String tName = this.generatorOptions.getTemplateName() + ".ftl";
+        final String templateFilename = this.generatorOptions.getTemplateName() + ".ftl";
         try {
             final File dir = new File(this.generatorOptions.getTemplateDir());
-            log.info("Path: {}", dir.getAbsolutePath());
-            this.cfg.setDirectoryForTemplateLoading(dir);
-            this.template = this.cfg.getTemplate(tName);
-            final DefaultObjectWrapperBuilder builder =
-                    new DefaultObjectWrapperBuilder(this.cfg.getIncompatibleImprovements());
-            this.cfg.setObjectWrapper(builder.build());
-            final File op = new File(this.generatorOptions.getOutputPath());
-            if (!op.exists() && !op.mkdirs()) {
-                throw new IOException(
-                        "An error occurred during folder creation " + this.generatorOptions.getOutputPath());
+            log.info("Template path: {}", dir.getAbsolutePath());
+            this.configuration.setDirectoryForTemplateLoading(dir);
+            this.template = this.configuration.getTemplate(templateFilename);
+            final DefaultObjectWrapperBuilder builder = new DefaultObjectWrapperBuilder(this.configuration.getIncompatibleImprovements());
+            this.configuration.setObjectWrapper(builder.build());
+            final File file = new File(this.outputPath);
+            if (!file.exists() && !file.mkdirs()) {
+                throw new IOException("An error occurred during creation of following folder: " + this.outputPath);
             }
         } catch (final IOException e) {
-            throw new IOException("Can't find template " + tName + ".", e);
+            throw new IOException("Can't find template " + templateFilename + ".", e);
         }
-
     }
 
-    public Writer getWriter(final String fileNamePart, final String packageName) throws IOException {
-        if (!packageName.equals(this.generatorOptions.getFilePackage())) {
-            this.generatorOptions.setFilePackage(packageName.replace(".", File.separator));
-        }
-
-        final String fullPath = this.generatorOptions.getOutputPath()
+    public Writer getWriter(final String filename) throws IOException {
+        final String fullPath = this.outputPath
                 + File.separator
-                + (this.generatorOptions.getFilePackage().isEmpty() ? "" : this.packageToPath(this.generatorOptions.getFilePackage())
-                + File.separator)
-                + this.generatorOptions.getOutputFileName().replace("{0}", fileNamePart);
+                + this.generatorOptions.getFilePackage()
+                + File.separator
+                + this.generatorOptions.getOutputFileName().replace("{0}", filename);
 
-        final File of = new File(fullPath);
-        if (!of.getParentFile().exists() && !of.getParentFile().mkdirs()) {
-            throw new IOException("An error occurred during output folder creation "
-                    + this.generatorOptions.getOutputPath());
+        final File file = new File(fullPath);
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            throw new IOException("An error occurred during creation of following folder: " + this.outputPath);
         }
 
-        log.info("File path: {}", of.getPath());
-        log.info("File name: {}", of.getName());
+        log.info("File path: {}", file.getPath());
+        log.info("File name: {}", file.getName());
 
-        if (!this.generatorOptions.getOverwrite() && of.exists()) {
+        if (!this.generatorOptions.getOverwrite() && file.exists()) {
             return null;
         }
 
-        return new OutputStreamWriter(new FileOutputStream(of));
-
-    }
-
-    protected String packageToPath(final String pack) {
-        return pack.replace(".", File.separator);
+        return new OutputStreamWriter(new FileOutputStream(file));
     }
 }

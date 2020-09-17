@@ -1,64 +1,45 @@
 package org.asdm.springbootgeneratorplugin.generator;
 
 import freemarker.template.TemplateException;
-import org.asdm.springbootgeneratorplugin.model.MetaAppInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class ApplicationGenerator extends BasicGenerator {
 
-    private final MetaAppInfo metaAppInfo;
-
-    public ApplicationGenerator(final GeneratorOptions generatorOptions, final MetaAppInfo metaAppInfo) {
-        super(generatorOptions);
-        this.metaAppInfo = metaAppInfo;
+    public ApplicationGenerator(final GeneratorOptions generatorOptions, final String outputPath) {
+        super(generatorOptions, outputPath);
     }
 
     @Override
-    public void generate() {
+    public void generate() throws IOException {
 
         try {
             super.generate();
         } catch (final IOException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            throw new IOException(e.getMessage());
         }
 
         final Writer out;
         final Map<String, Object> context = new HashMap<>();
         try {
-            final String serviceFilePackage = MetaModel.getInstance().getMetaAppInfo().getName() + "/src/main/java/" + MetaModel.getInstance().getPackageBase();
-            out = this.getWriter(modifyName(this.metaAppInfo.getInfo().getArtifactId()) + "Application", serviceFilePackage);
+            final String appName =MetaModel.getInstance().getMetaAppInfo().getName();
+            out = this.getWriter(appName + "Application");
             if (out != null) {
                 context.put("packageBase", MetaModel.getInstance().getPackageBase());
-                context.put("name", modifyName(this.metaAppInfo.getInfo().getArtifactId()));
+                context.put("name", appName);
+                log.info("Start generating {}Application.java...", appName);
                 this.getTemplate().process(context, out);
                 out.flush();
+                log.info("End of generating {}Application.java...", appName);
             }
         } catch (final TemplateException | IOException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            throw new IOException(e.getMessage());
         }
-    }
-
-    private String modifyName(String artifactId) {
-        StringBuilder builder = new StringBuilder();
-        if (artifactId.contains("_")) {
-            String[] words = artifactId.split("_");
-            for (String word : words) {
-                builder.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
-            }
-        } else if (artifactId.contains("-")) {
-            String[] words = artifactId.split("-");
-            for (String word : words) {
-                builder.append(word.substring(0, 1).toUpperCase()).append(word.substring(1));
-            }
-        } else {
-            builder.append(artifactId.substring(0, 1).toUpperCase()).append(artifactId.substring(1));
-        }
-        return builder.toString();
     }
 }

@@ -10,54 +10,34 @@ import org.asdm.springbootgeneratorplugin.model.MetaColumn;
 import org.asdm.springbootgeneratorplugin.model.MetaEntity;
 import org.asdm.springbootgeneratorplugin.model.MetaEnumeration;
 import org.asdm.springbootgeneratorplugin.model.MetaModel;
-import org.asdm.springbootgeneratorplugin.util.XmlParser;
+import org.asdm.springbootgeneratorplugin.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class ModelAnalyzer {
-    //root model package
     private final Package root;
+    private final List<String> libraries;
 
-    //java root package for generated code
-    private final String filePackage;
-
-    private Map<String, TypeMapping> typeMappingMap;
-    private List<String> libraries;
-
-    public ModelAnalyzer(final Package root, final String filePackage) {
-        super();
+    public ModelAnalyzer(final Package root) {
         this.root = root;
-        this.filePackage = filePackage;
-        this.typeMappingMap = XmlParser.parseTypeMappingXml();
         this.libraries = new ArrayList<>();
-    }
-
-    public Package getRoot() {
-        return this.root;
     }
 
     public void prepareModel() throws AnalyzeException {
         MetaModel.getInstance().getEntities().clear();
         MetaModel.getInstance().getEnumerations().clear();
-        this.processPackage(this.root, this.filePackage);
+        this.processPackage(this.root);
     }
 
-    private void processPackage(final Package pack, final String packageOwner) throws AnalyzeException {
-        if (pack.getName() == null) {
-            throw
-                    new AnalyzeException("Packages must have names!");
+    private void processPackage(final Package pckg) throws AnalyzeException {
+        if (pckg.getName() == null) {
+            throw new AnalyzeException(Constants.PACKAGES_NAME_MESSAGE);
         }
 
-        String packageName = packageOwner;
-        if (pack != this.root) {
-            packageName += "." + pack.getName();
-        }
-
-        if (pack.hasOwnedElement()) {
-            for (final Element ownedElement : pack.getOwnedElement()) {
+        if (pckg.hasOwnedElement()) {
+            for (final Element ownedElement : pckg.getOwnedElement()) {
                 if (ownedElement instanceof Class) {
                     final Class cl = (Class) ownedElement;
                     final MetaEntity metaEntity = this.getClassData(cl);
@@ -70,31 +50,33 @@ public class ModelAnalyzer {
                 }
             }
 
-            for (final Element ownedElement : pack.getOwnedElement()) {
+            for (final Element ownedElement : pckg.getOwnedElement()) {
                 if (ownedElement instanceof Package) {
                     final Package ownedPackage = (Package) ownedElement;
-                    this.processPackage(ownedPackage, packageName);
+                    if (StereotypesHelper.getAppliedStereotypeByString(ownedPackage, Constants.APP_TYPE) != null)
+                        this.processPackage(ownedPackage);
                 }
             }
         }
     }
 
-    private MetaEntity getClassData(final Class cl) throws AnalyzeException {
-        if (cl.getName() == null) {
-            throw new AnalyzeException("Classes must have names!");
+    private MetaEntity getClassData(final Class clazz) throws AnalyzeException {
+        if (clazz.getName() == null) {
+            throw new AnalyzeException(Constants.CLASSES_NAME_MESSAGE);
         }
 
         final MetaEntity metaEntity = MetaEntity.builder()
-                .name(cl.getName())
-                .visibility(cl.getVisibility().toString())
-                .columns(new ArrayList<MetaColumn>())
-                .imports(new ArrayList<String>())
+                .name(clazz.getName())
+                .visibility(clazz.getVisibility().toString())
+                .columns(new ArrayList<>())
+                .imports(new ArrayList<>())
                 .build();
-        final Iterator<Property> it = ModelHelper.attributes(cl);
+
+        final Iterator<Property> it = ModelHelper.attributes(clazz);
 
         this.libraries.clear();
 
-        final Iterator<Association> associations = ModelHelper.associations(cl);
+        final Iterator<Association> associations = ModelHelper.associations(clazz);
         RelationshipType relationshipType = RelationshipType.NONE;
         while (associations.hasNext()) {
             final Association association = associations.next();
@@ -105,7 +87,7 @@ public class ModelAnalyzer {
             final int firstMemberEndUpper = firstMemberEnd.getUpper();
             final int secondMemberEndUpper = secondMemberEnd.getUpper();
 
-            if (firstMemberEnd.getClassifier() != null && firstMemberEnd.getClassifier().getName().equals(cl.getName())) {
+            if (firstMemberEnd.getClassifier() != null && firstMemberEnd.getClassifier().getName().equals(clazz.getName())) {
                 if (firstMemberEndUpper == -1 && secondMemberEndUpper == -1) {
                     relationshipType = RelationshipType.MANY_TO_MANY;
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == 1) {
@@ -117,7 +99,7 @@ public class ModelAnalyzer {
                 }
             }
 
-            if (secondMemberEnd.getClassifier() != null && secondMemberEnd.getClassifier().getName().equals(cl.getName())) {
+            if (secondMemberEnd.getClassifier() != null && secondMemberEnd.getClassifier().getName().equals(clazz.getName())) {
                 if (firstMemberEndUpper == -1 && secondMemberEndUpper == -1) {
                     relationshipType = RelationshipType.MANY_TO_MANY;
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == 1) {
@@ -132,11 +114,11 @@ public class ModelAnalyzer {
 
         while (it.hasNext()) {
             final Property p = it.next();
-            final MetaColumn metaColumn = this.getPropertyData(p, cl, relationshipType);
+            final MetaColumn metaColumn = this.getPropertyData(p, clazz, relationshipType);
             metaEntity.getColumns().add(metaColumn);
         }
 
-        for (String library: this.libraries){
+        for (final String library : this.libraries) {
             metaEntity.getImports().add(library);
         }
 
@@ -154,45 +136,41 @@ public class ModelAnalyzer {
         metaEntity.setPrimaryKeyColumnCounter(pkColumnsCounter);
 
         if (pkColumnsCounter == 0) {
-            metaEntity.setPrimaryKeyType("Long");
-            metaEntity.setPrimaryKeyName("id");
+            metaEntity.setPrimaryKeyType(Constants.LONG_CLASS);
+            metaEntity.setPrimaryKeyName(Constants.ID);
         } else if (pkColumnsCounter == 1) {
             metaEntity.setPrimaryKeyType(pkType);
             metaEntity.setPrimaryKeyName(pkName);
         } else {
-            metaEntity.setPrimaryKeyType(metaEntity.getName() + "Id");
-            metaEntity.setPrimaryKeyName("id");
+            metaEntity.setPrimaryKeyType(metaEntity.getName() + Constants.ID.substring(0, 1).toUpperCase() + Constants.ID.substring(1));
+            metaEntity.setPrimaryKeyName(Constants.ID);
         }
 
         return metaEntity;
     }
 
-    private MetaColumn getPropertyData(final Property p, final Class cl, RelationshipType relationshipType) throws AnalyzeException {
-        final String attName = p.getName();
+    private MetaColumn getPropertyData(final Property property, final Class clazz, final RelationshipType relationshipType) throws AnalyzeException {
+        final String attName = property.getName();
         if (attName == null) {
-            throw new AnalyzeException("Properties of the class: " + cl.getName() +
-                    " must have names!");
+            throw new AnalyzeException("Properties of the class: " + clazz.getName() + " must have name!");
         }
-        final Type attType = p.getType();
-        if (attType == null) {
-            throw new AnalyzeException("Property " + cl.getName() + "." +
-                    p.getName() + " must have type!");
+        final Type attributeType = property.getType();
+        if (attributeType == null) {
+            throw new AnalyzeException("Property " + clazz.getName() + "." + property.getName() + " must have type!");
         }
 
-        String typeName = attType.getName();
+        String typeName = attributeType.getName();
         if (typeName == null) {
-
-            throw new AnalyzeException("Type ot the property " + cl.getName() + "." +
-                    p.getName() + " must have name!");
+            throw new AnalyzeException("Type ot the property " + clazz.getName() + "." + property.getName() + " must have name!");
         }
 
-        final int lower = p.getLower();
-        final int upper = p.getUpper();
+        final int lower = property.getLower();
+        final int upper = property.getUpper();
 
-        if (this.typeMappingMap.containsKey(typeName)) {
-            TypeMapping typeMapping = this.typeMappingMap.get(typeName);
+        if (MetaModel.getInstance().getTypeMappingMap().containsKey(typeName)) {
+            final TypeMapping typeMapping = MetaModel.getInstance().getTypeMappingMap().get(typeName);
             typeName = typeMapping.getDestinationType();
-            if (typeMapping.getLibraryName() != null){
+            if (typeMapping.getLibraryName() != null) {
                 if (!this.libraries.contains(typeMapping.getLibraryName())) {
                     this.libraries.add(typeMapping.getLibraryName());
                 }
@@ -200,10 +178,10 @@ public class ModelAnalyzer {
         }
 
         boolean isPartOfPrimaryKey = false;
-        final List<Stereotype> stereotypes = StereotypesHelper.getStereotypes(p);
+        final List<Stereotype> stereotypes = StereotypesHelper.getStereotypes(property);
         if (!stereotypes.isEmpty()) {
-            for (Stereotype stereotype : stereotypes) {
-                if (stereotype.getName().equals("PrimaryKey")) {
+            for (final Stereotype stereotype : stereotypes) {
+                if (stereotype.getName().equals(Constants.PK_STEREOTYPE)) {
                     isPartOfPrimaryKey = true;
                 }
             }
@@ -214,10 +192,10 @@ public class ModelAnalyzer {
         return MetaColumn.builder()
                 .name(attName)
                 .type(typeName)
-                .visibility(p.getVisibility().toString())
+                .visibility(property.getVisibility().toString())
                 .lower(lower)
                 .upper(upper)
-                .unique(p.isUnique())
+                .unique(property.isUnique())
                 .relationshipType(relationshipType.name())
                 .partOfPrimaryKey(isPartOfPrimaryKey)
                 .build();
@@ -231,13 +209,10 @@ public class ModelAnalyzer {
         for (int i = 0; i < list.size() - 1; i++) {
             final EnumerationLiteral literal = list.get(i);
             if (literal.getName() == null) {
-                throw new AnalyzeException("Items of the metaEnumeration " + metaEnumeration.getName() +
-                        " must have names!");
+                throw new AnalyzeException("Items of the metaEnumeration " + metaEnumeration.getName() + " must have names!");
             }
             metaEnumeration.getValues().add(literal.getName());
         }
         return metaEnumeration;
     }
-
-
 }

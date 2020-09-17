@@ -19,7 +19,7 @@ public class ${entity.name}Controller extends ${entity.name}ControllerBase {
     }
 
     @Override
-    protected UserServiceBase getUserService() {
-        return userService;
+    protected ${entity.name}ServiceBase get${entity.name}Service() {
+        return ${entity.name?uncap_first}Service;
     }
 }

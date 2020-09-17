@@ -15,6 +15,7 @@ import java.util.List;
 public abstract class ${entity.name}ControllerBase {
 
     protected abstract ${entity.name}ServiceBase get${entity.name}Service();
+
 <#if entity.primaryKeyColumnCounter lt 2>
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<${entity.name}> findById(@PathVariable ${entity.primaryKeyType} id) {

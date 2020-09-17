@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<versions>
+    <version>
+        <versionName>2.4.0 (SNAPSHOT)</versionName>
+        <concreteVersion>2.4.0-SNAPSHOT</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.4.0 (M2)</versionName>
+        <concreteVersion>2.4.0-M2</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.3.4 (SNAPSHOT)</versionName>
+        <concreteVersion>2.3.4.BUILD-SNAPSHOT</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.3.3</versionName>
+        <concreteVersion>2.3.3.RELEASE</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.2.10 (SNAPSHOT)</versionName>
+        <concreteVersion>2.2.10.BUILD-SNAPSHOT</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.2.9</versionName>
+        <concreteVersion>2.2.9.RELEASE</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.1.17 (SNAPSHOT)</versionName>
+        <concreteVersion>2.1.17.BUILD-SNAPSHOT</concreteVersion>
+    </version>
+    <version>
+        <versionName>2.1.16</versionName>
+        <concreteVersion>2.1.16.RELEASE</concreteVersion>
+    </version>
+</versions>

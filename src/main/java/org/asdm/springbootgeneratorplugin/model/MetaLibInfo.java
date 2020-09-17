@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MetaLibInfo {
-    private String groupId;
-    private String artifactId;
-    private String version;
+    protected String groupId;
+    protected String artifactId;
+    protected String version;
 }
