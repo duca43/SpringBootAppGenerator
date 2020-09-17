@@ -89,7 +89,7 @@ public class ProjectMetadataDialog extends JDialog {
                     }
 
                     final PackagingType packaging;
-                    if (ProjectMetadataDialog.this.metadataPanel.getSelectedPackaging().equals(PackagingType.JAR.name())) {
+                    if (ProjectMetadataDialog.this.metadataPanel.getSelectedPackaging().equals(PackagingType.JAR.toString())) {
                         packaging = PackagingType.JAR;
                     } else {
                         packaging = PackagingType.WAR;

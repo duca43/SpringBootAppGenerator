@@ -32,7 +32,7 @@ public class EnumGenerator extends BasicGenerator {
         final Writer out;
         final Map<String, Object> context = new HashMap<>();
         try {
-            final String filename = this.metaEnumeration.getName() + "Enum";
+            final String filename = this.metaEnumeration.getName();
             out = this.getWriter(filename);
             if (out != null) {
                 context.put("enum", this.metaEnumeration);

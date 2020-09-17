@@ -15,5 +15,6 @@ public class MetaColumn extends MetaElement {
     private Integer upper;
     private boolean unique;
     private String relationshipType;
+    private String relationshipOwner;
     private boolean partOfPrimaryKey;
 }

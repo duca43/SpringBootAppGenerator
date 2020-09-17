@@ -71,12 +71,13 @@ public class ModelAnalyzer {
                 .imports(new ArrayList<>())
                 .build();
 
-        final Iterator<Property> it = ModelHelper.attributes(clazz);
+        final Iterator<Property> propertyIterator = ModelHelper.attributes(clazz);
 
         this.libraries.clear();
 
         final Iterator<Association> associations = ModelHelper.associations(clazz);
-        Map<Property, RelationshipType> relationshipTypeMap = new HashMap<>();
+        final Map<Property, RelationshipType> relationshipTypeMap = new HashMap<>();
+        final Map<Property, String> relationshipOwnerMap = new HashMap<>();
         while (associations.hasNext()) {
             final Association association = associations.next();
 
@@ -89,35 +90,47 @@ public class ModelAnalyzer {
             if (firstMemberEnd.getClassifier() != null && firstMemberEnd.getClassifier().getName().equals(clazz.getName())) {
                 if (firstMemberEndUpper == -1 && secondMemberEndUpper == -1) {
                     relationshipTypeMap.put(firstMemberEnd, RelationshipType.MANY_TO_MANY);
+                    relationshipOwnerMap.put(firstMemberEnd, secondMemberEnd.getName());
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == 1) {
                     relationshipTypeMap.put(firstMemberEnd, RelationshipType.ONE_TO_ONE);
+                    relationshipOwnerMap.put(firstMemberEnd, null);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == -1) {
                     relationshipTypeMap.put(firstMemberEnd, RelationshipType.MANY_TO_ONE);
+                    relationshipOwnerMap.put(firstMemberEnd, null);
                 } else {
                     relationshipTypeMap.put(firstMemberEnd, RelationshipType.ONE_TO_MANY);
+                    relationshipOwnerMap.put(firstMemberEnd, secondMemberEnd.getName());
                 }
             }
 
             if (secondMemberEnd.getClassifier() != null && secondMemberEnd.getClassifier().getName().equals(clazz.getName())) {
                 if (firstMemberEndUpper == -1 && secondMemberEndUpper == -1) {
                     relationshipTypeMap.put(secondMemberEnd, RelationshipType.MANY_TO_MANY);
+                    relationshipOwnerMap.put(secondMemberEnd, null);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == 1) {
                     relationshipTypeMap.put(secondMemberEnd, RelationshipType.ONE_TO_ONE);
+                    relationshipOwnerMap.put(secondMemberEnd, null);
                 } else if (firstMemberEndUpper == 1 && secondMemberEndUpper == -1) {
                     relationshipTypeMap.put(secondMemberEnd, RelationshipType.ONE_TO_MANY);
+                    relationshipOwnerMap.put(secondMemberEnd, firstMemberEnd.getName());
                 } else {
                     relationshipTypeMap.put(secondMemberEnd, RelationshipType.MANY_TO_ONE);
+                    relationshipOwnerMap.put(secondMemberEnd, null);
                 }
             }
         }
 
-        while (it.hasNext()) {
-            final Property p = it.next();
+        while (propertyIterator.hasNext()) {
+            final Property property = propertyIterator.next();
             RelationshipType relationshipType = RelationshipType.NONE;
-            if (relationshipTypeMap.containsKey(p)){
-                relationshipType = relationshipTypeMap.get(p);
+            String relationshipOwner = null;
+            if (relationshipTypeMap.containsKey(property)) {
+                relationshipType = relationshipTypeMap.get(property);
             }
-            final MetaColumn metaColumn = this.getPropertyData(p, clazz, relationshipType);
+            if (relationshipOwnerMap.containsKey(property)) {
+                relationshipOwner = relationshipOwnerMap.get(property);
+            }
+            final MetaColumn metaColumn = this.getPropertyData(property, clazz, relationshipType, relationshipOwner);
             metaEntity.getColumns().add(metaColumn);
         }
 
@@ -152,7 +165,7 @@ public class ModelAnalyzer {
         return metaEntity;
     }
 
-    private MetaColumn getPropertyData(final Property property, final Class clazz, final RelationshipType relationshipType) throws AnalyzeException {
+    private MetaColumn getPropertyData(final Property property, final Class clazz, final RelationshipType relationshipType, final String relationshipOwner) throws AnalyzeException {
         final String attName = property.getName();
         if (attName == null) {
             throw new AnalyzeException("Properties of the class: " + clazz.getName() + " must have name!");
@@ -190,8 +203,6 @@ public class ModelAnalyzer {
             }
         }
 
-        //TODO: Create stereotype enum
-
         return MetaColumn.builder()
                 .name(attName)
                 .type(typeName)
@@ -199,7 +210,8 @@ public class ModelAnalyzer {
                 .lower(lower)
                 .upper(upper)
                 .unique(property.isUnique())
-                .relationshipType(relationshipType.name())
+                .relationshipType(relationshipType.toString())
+                .relationshipOwner(relationshipOwner)
                 .partOfPrimaryKey(isPartOfPrimaryKey)
                 .build();
     }
@@ -209,7 +221,7 @@ public class ModelAnalyzer {
                 .name(enumeration.getName())
                 .build();
         final List<EnumerationLiteral> list = enumeration.getOwnedLiteral();
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i < list.size(); i++) {
             final EnumerationLiteral literal = list.get(i);
             if (literal.getName() == null) {
                 throw new AnalyzeException("Items of the metaEnumeration " + metaEnumeration.getName() + " must have names!");

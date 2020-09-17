@@ -6,8 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
 <#list libraries as library>
 import ${library};
+</#list>
+<#list properties as property>
+<#if property.upper == -1>
+import java.util.HashSet;
+import java.util.Set;
+<#break>
+</#if>
 </#list>
 
 @Data
@@ -37,12 +45,12 @@ ${entity.visibility} class ${entity.name} {
 </#if>
 <#if property.upper == 1 && !property.partOfPrimaryKey>
 <#if property.relationshipType??>
-    <#if property.relationshipType == "OneToOne">
+<#if property.relationshipType == "OneToOne">
     @OneToOne
-    <#elseif property.relationshipType == "ManyToOne">
+<#elseif property.relationshipType == "ManyToOne">
     @ManyToOne
     @JoinColumn(<#if property.unique??>unique = ${property.unique?c} </#if><#if property.lower??>, nullable = <#if property.lower == 0>true<#else>false</#if></#if>)
-    </#if>
+</#if>
     ${property.visibility} ${property.type} ${property.name};
 
 <#else>
@@ -52,13 +60,18 @@ ${entity.visibility} class ${entity.name} {
 </#if>
 <#elseif property.upper == -1>
 <#if property.relationshipType??>
-    <#if property.relationshipType == "OneToMany">
-    @OneToMany(mappedBy="${entity.name?uncap_first}")
-    <#elseif property.relationshipType == "ManyToMany">
+<#if property.relationshipType == "OneToMany">
+    @OneToMany(mappedBy="${property.relationshipOwner}")
+<#elseif property.relationshipType == "ManyToMany">
+<#if property.relationshipOwner??>
+    @ManyToMany(mappedBy="${property.relationshipOwner}")
+<#else>
     @ManyToMany
-    </#if>
+    @JoinTable
 </#if>
-    ${property.visibility} Set<${property.type}> ${property.name} = new HashSet<${property.type}>();
+</#if>
+</#if>
+    ${property.visibility} Set<${property.type}> ${property.name} = new HashSet<>();
 
 </#if>
 </#list>
